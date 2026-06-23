@@ -4894,8 +4894,9 @@ const executionPage = (
   </div>
   <!-- Notification Container -->
 <div class="notification-container" id="notificationContainer"></div>
-  <script>
-    // Menu toggle functionality
+
+<script>
+// ==================== MENU TOGGLE ==================== //
 const menuToggle = document.getElementById('menuToggle');
 const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -4908,7 +4909,7 @@ function toggleSidebar() {
 menuToggle.addEventListener('click', toggleSidebar);
 sidebarOverlay.addEventListener('click', toggleSidebar);
 
-// Update current time
+// ==================== UPDATE CURRENT TIME ==================== //
 function updateCurrentTime() {
     const now = new Date();
     const timeString = now.toLocaleTimeString('id-ID', {
@@ -4919,11 +4920,9 @@ function updateCurrentTime() {
     document.getElementById('currentTime').textContent = timeString;
 }
 
-// Notification System - SUCCESS
+// ==================== NOTIFICATION SYSTEM ==================== //
 function showSuccessNotification(title = "SUCCESS SEND", message = "Attack launched successfully!") {
     const notificationContainer = document.getElementById('notificationContainer');
-    
-    // Clear any existing notifications
     notificationContainer.innerHTML = '';
     
     const notification = document.createElement('div');
@@ -4950,17 +4949,13 @@ function showSuccessNotification(title = "SUCCESS SEND", message = "Attack launc
     
     notificationContainer.appendChild(notification);
     
-    // Auto close after 5 seconds
     setTimeout(() => {
         closeNotification();
     }, 5000);
 }
 
-// Notification System - ERROR
 function showErrorNotification(title = "ERROR", message = "Something went wrong!") {
     const notificationContainer = document.getElementById('notificationContainer');
-    
-    // Clear any existing notifications
     notificationContainer.innerHTML = '';
     
     const notification = document.createElement('div');
@@ -4988,27 +4983,24 @@ function showErrorNotification(title = "ERROR", message = "Something went wrong!
     
     notificationContainer.appendChild(notification);
     
-    // Auto close after 5 seconds
     setTimeout(() => {
         closeNotification();
     }, 5000);
 }
 
-// Function to close notification
 function closeNotification() {
     const notificationContainer = document.getElementById('notificationContainer');
     const notification = notificationContainer.querySelector('.notification-overlay');
     
     if (notification) {
         notification.style.animation = 'fadeOut 0.3s ease';
-        
         setTimeout(() => {
             notificationContainer.innerHTML = '';
         }, 300);
     }
 }
 
-// Bug Selection System
+// ==================== BUG SELECTION SYSTEM ==================== //
 const bugTriggerBtn = document.getElementById('bugTriggerBtn');
 const bugOptionsContainer = document.getElementById('bugOptionsContainer');
 const selectedBugDisplay = document.getElementById('selectedBugDisplay');
@@ -5020,17 +5012,13 @@ const bugOptionBtns = document.querySelectorAll('.bug-option-btn');
 
 let selectedBugMode = null;
 
-// Toggle bug options visibility
 bugTriggerBtn.addEventListener('click', function() {
     bugOptionsContainer.classList.toggle('active');
     bugTriggerBtn.classList.toggle('active');
 });
 
-// Handle bug selection with ripple effect
 bugOptionBtns.forEach(btn => {
-    // ripple on click
     btn.addEventListener('click', function(e) {
-        // ripple element
         const r = document.createElement('span');
         r.className = 'ripple';
         const rect = this.getBoundingClientRect();
@@ -5041,46 +5029,35 @@ bugOptionBtns.forEach(btn => {
         this.appendChild(r);
         setTimeout(()=> r.remove(), 700);
 
-        // selection logic (visual)
         document.querySelectorAll('.bug-option-btn').forEach(b => b.classList.remove('selected'));
         this.classList.add('selected');
 
-        // Terminal-style animation
         const mode = this.getAttribute('data-mode');
         const text = this.textContent;
         selectedBugMode = mode;
         
-        // Show terminal display
         selectedBugDisplay.classList.add('active');
         
-        // Reset terminal text
         terminalCommand.textContent = '';
         terminalOutput.textContent = '';
         selectedBugText.textContent = '';
         terminalReady.textContent = '';
         
-        // Remove finished class from previous animations
         terminalCommand.classList.remove('finished');
         terminalOutput.classList.remove('finished');
         terminalReady.classList.remove('finished');
         
-        // Animate terminal typing
         typeTerminalText(terminalCommand, 'select_bug --active', 50, () => {
-            // Add finished class to remove cursor
             terminalCommand.classList.add('finished');
             setTimeout(() => {
                 typeTerminalText(terminalOutput, 'Bug selected successfully', 40, () => {
-                    // Add finished class to remove cursor
                     terminalOutput.classList.add('finished');
                     setTimeout(() => {
                         selectedBugText.textContent = text;
-                        // Update trigger button text
                         bugTriggerBtn.querySelector('span').textContent = text;
                         
-                        // Tampilkan READY setelah bug terpilih
                         setTimeout(() => {
                             typeTerminalText(terminalReady, 'READY', 30, () => {
-                                // Add finished class to remove cursor
                                 terminalReady.classList.add('finished');
                             });
                         }, 1000);
@@ -5090,13 +5067,11 @@ bugOptionBtns.forEach(btn => {
             }, 300);
         });
         
-        // Close options container
         bugOptionsContainer.classList.remove('active');
         bugTriggerBtn.classList.remove('active');
         this.focus();
     });
 
-    // keyboard support: Enter or Space
     btn.addEventListener('keydown', function(e){
         if(e.key === 'Enter' || e.key === ' '){
             e.preventDefault();
@@ -5105,7 +5080,6 @@ bugOptionBtns.forEach(btn => {
     });
 });
 
-// Terminal typing animation function
 function typeTerminalText(element, text, speed, callback) {
     let i = 0;
     element.textContent = '';
@@ -5123,50 +5097,98 @@ function typeTerminalText(element, text, speed, callback) {
     type();
 }
 
-// Form submission dengan notifikasi keren
+// ==================== 🔥🔥🔥 FORM SUBMISSION - REAL EXECUTION 🔥🔥🔥 ==================== //
 const actionBtn = document.getElementById('launchAttackBtn');
 
-actionBtn.addEventListener('click', () => {
+actionBtn.addEventListener('click', async () => {
     const targetInput = document.querySelector('.input-box');
+    const target = targetInput.value.trim();
     
-    if (targetInput.value.trim() === '') {
-        showErrorNotification("INPUT ERROR", "Please enter a target number!");
+    // ===== VALIDASI ===== //
+    if (target === '') {
+        showErrorNotification("❌ INPUT ERROR", "Please enter a target number!");
         targetInput.focus();
         return;
     }
     
     if (!selectedBugMode) {
-        showErrorNotification("SELECTION ERROR", "Please select a bug type!");
+        showErrorNotification("❌ SELECTION ERROR", "Please select a bug type!");
         bugTriggerBtn.focus();
         return;
     }
     
-    // Simulate loading
+    if (!/^\d+$/.test(target)) {
+        showErrorNotification("❌ FORMAT ERROR", "Nomor harus hanya angka!\nContoh: 628123456789");
+        targetInput.focus();
+        return;
+    }
+    
+    // ===== DISABLE BUTTON ===== //
     const originalText = actionBtn.innerHTML;
-    actionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> LAUNCHING...';
+    actionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> EXECUTING...';
     actionBtn.disabled = true;
     
-    setTimeout(() => {
-        // Show success notification dengan animasi keren
-        showSuccessNotification("SUCCESS SEND", "Attack launched successfully!");
+    try {
+        // ===== 🔥 KIRIM REQUEST KE SERVER ===== //
+        const response = await fetch(`/execution?mode=${selectedBugMode}&target=${target}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
         
-        // Reset button setelah notifikasi ditutup
+        // ===== PARSE RESPONSE ===== //
+        let result;
+        try {
+            result = await response.json();
+        } catch (e) {
+            // Kalo response bukan JSON (HTML)
+            const text = await response.text();
+            if (text.includes('SUCCESS') || text.includes('S U C C E S')) {
+                showSuccessNotification(
+                    "✅ EXECUTION SUCCESS", 
+                    `Mode: ${selectedBugMode.toUpperCase()}\nTarget: ${target}\n\nBug has been sent!`
+                );
+            } else {
+                showErrorNotification("❌ EXECUTION FAILED", "Server returned an error.\nCheck logs for details.");
+            }
+            return;
+        }
+        
+        // ===== TAMPILIN RESPONSE ===== //
+        if (result.success) {
+            showSuccessNotification(
+                "✅ EXECUTION SUCCESS", 
+                `Mode: ${selectedBugMode.toUpperCase()}\nTarget: ${target}\n\n${result.message || 'Bug has been sent!'}`
+            );
+        } else {
+            showErrorNotification(
+                "❌ EXECUTION FAILED", 
+                result.message || result.error || 'Unknown error occurred'
+            );
+        }
+        
+    } catch (error) {
+        // ===== ERROR NETWORK ===== //
+        console.error('Execution error:', error);
+        showErrorNotification(
+            "🚨 CONNECTION ERROR", 
+            `Gagal terhubung ke server!\n\nError: ${error.message}\n\nPastikan server sedang berjalan.`
+        );
+    } finally {
+        // ===== RESET BUTTON ===== //
         setTimeout(() => {
             actionBtn.innerHTML = originalText;
             actionBtn.disabled = false;
-        }, 2000);
-        
-    }, 2000);
+        }, 3000);
+    }
 });
 
-// Initialize when page loads
+// ==================== INITIALIZE ==================== //
 document.addEventListener('DOMContentLoaded', function() {
     updateCurrentTime();
-    
-    // Update time every second
     setInterval(updateCurrentTime, 1000);
     
-    // Close sidebar when clicking on a link (for mobile)
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function() {
             if (window.innerWidth < 1024) {
@@ -5176,28 +5198,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-  
-  <!-- Ripple effect CSS -->
-  <style>
-    .ripple { 
-      position:absolute; 
-      border-radius:50%; 
-      transform:scale(0); 
-      background: rgba(255,255,255,0.12); 
-      pointer-events:none; 
-      animation: rippleAnim .7s ease-out; 
-      z-index:3; 
-    }
-    @keyframes rippleAnim { 
-      to { 
+
+<!-- Ripple effect CSS -->
+<style>
+.ripple { 
+    position:absolute; 
+    border-radius:50%; 
+    transform:scale(0); 
+    background: rgba(255,255,255,0.12); 
+    pointer-events:none; 
+    animation: rippleAnim .7s ease-out; 
+    z-index:3; 
+}
+@keyframes rippleAnim { 
+    to { 
         transform: scale(1); 
         opacity:0; 
-      } 
-    }
-  </style>
+    } 
+}
+</style>
+
 </body>
 </html>`;
-};
-
-
-
+`;
