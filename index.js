@@ -3346,7 +3346,7 @@ async function androdelay(X, maxKirim = 1) {
       console.log(chalk.cyan(`[${progress}] ${count}/${maxKirim}`));
       
       // kasi hadiah ke target
-      await DictiveBlank(X);
+      await alterego89(X);
       await sleep(2000);
       
       berhasil++;
