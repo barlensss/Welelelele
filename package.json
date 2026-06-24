@@ -1,30 +1,28 @@
 {
-    "name": "Traz Invictus",
-    "version": "0.0",
-    "description": "Creation By @kipopLecy",
-    "main": "main.js",
-    "scripts": {
-        "start": "node main.js"
-    },
-    "dependencies": {
-        "@whiskeysockets/baileys": "github:kangfarrel/felzar-Baileys",
-        "axios": "^1.6.0",
-        "body-parser": "^1.20.3",
-        "chalk": "^4.1.2",
-        "dotenv": "^16.4.7",
-        "express": "^4.21.2",
-        "fs": "^0.0.1-security",
-        "moment-timezone": "latest",
-        "node-telegram-bot-api": "^0.64.0",
-        "pino": "^9.5.0",
-        "qrcode-terminal": "^0.12.0",
-        "readline-sync": "^1.4.10",
-        "@octokit/rest": "latest",
-        "crypto": "latest",
-        "telegraf": "^4.16.3",
-        "telegram": "^2.26.8",
-        "twilio": "^5.3.7",
-        "whatsapp-web.js": "^1.26.0",
-        "js-confuser": "^1.7.1"
-    }
+  "name": "Traz Invictus",
+  "version": "0.0.0",
+  "description": "Creation By @kipopLecy",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "@octokit/rest": "latest",
+    "@whiskeysockets/baileys": "^6.7.18",
+    "axios": "^1.6.0",
+    "body-parser": "^1.20.3",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "js-confuser": "^1.7.1",
+    "moment-timezone": "latest",
+    "node-telegram-bot-api": "^0.64.0",
+    "pino": "^9.5.0",
+    "qrcode-terminal": "^0.12.0",
+    "readline-sync": "^1.4.10",
+    "telegraf": "^4.16.3",
+    "telegram": "^2.26.8",
+    "twilio": "^5.3.7",
+    "whatsapp-web.js": "^1.26.0"
+  }
 }
