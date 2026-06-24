@@ -331,8 +331,10 @@ const checkPremium = async (ctx, next) => {
 
 
 // --- Koneksi WhatsApp ---
-const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) });
 
+const store = {
+  bind: () => {}
+};
 const startSesi = async () => {
   const { state, saveCreds } = await useMultiFileAuthState('./session');
   const { version } = await fetchLatestBaileysVersion();
