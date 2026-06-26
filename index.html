@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebCracker Pro — Pentest Suite</title>
+  <!-- Font & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0b0d15;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      color: #e0e6f0;
+    }
+    .container {
+      max-width: 900px;
+      width: 100%;
+      background: rgba(18, 23, 36, 0.85);
+      backdrop-filter: blur(16px);
+      border-radius: 48px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(64, 224, 208, 0.1);
+      border: 1px solid rgba(64, 224, 208, 0.2);
+      transition: 0.3s;
+    }
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #00f5d4, #00b8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sub {
+      color: #8892b0;
+      margin-top: 0.2rem;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      border-left: 3px solid #00f5d4;
+      padding-left: 1rem;
+      font-size: 0.95rem;
+    }
+    .input-section {
+      margin: 2.5rem 0 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .input-section input {
+      flex: 2;
+      min-width: 220px;
+      background: #141a2b;
+      border: 1px solid #2a3450;
+      border-radius: 60px;
+      padding: 16px 24px;
+      font-size: 1rem;
+      color: #e6f1ff;
+      outline: none;
+      transition: 0.3s;
+    }
+    .input-section input:focus {
+      border-color: #00f5d4;
+      box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.15);
+    }
+    .input-section button {
+      background: linear-gradient(135deg, #00f5d4, #0099ff);
+      border: none;
+      border-radius: 60px;
+      padding: 16px 34px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0b0d15;
+      cursor: pointer;
+      transition: 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 20px rgba(0, 245, 212, 0.2);
+    }
+    .input-section button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 35px rgba(0, 245, 212, 0.4);
+    }
+    .status-box {
+      background: #111827;
+      border-radius: 20px;
+      padding: 1.2rem 1.8rem;
+      margin: 1.8rem 0;
+      border-left: 4px solid #00f5d4;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: #a5b4d0;
+      min-height: 70px;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 2rem;
+    }
+    .file-card {
+      background: #141a2b;
+      border-radius: 18px;
+      padding: 1.2rem 1rem;
+      border: 1px solid #1f2a44;
+      transition: 0.2s;
+      cursor: default;
+      text-align: center;
+    }
+    .file-card i {
+      font-size: 2.2rem;
+      color: #00f5d4;
+      margin-bottom: 8px;
+    }
+    .file-card .name {
+      font-weight: 500;
+      font-size: 0.9rem;
+      word-break: break-all;
+      color: #ccd6f6;
+    }
+    .file-card .size {
+      font-size: 0.75rem;
+      color: #6b7a9f;
+      margin-top: 4px;
+    }
+    .file-card .download-btn {
+      margin-top: 10px;
+      background: #1f2a44;
+      border: none;
+      border-radius: 30px;
+      padding: 6px 16px;
+      color: #ccd6f6;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .file-card .download-btn:hover {
+      background: #2f3d64;
+      color: #fff;
+    }
+    .badge {
+      display: inline-block;
+      background: #1a233a;
+      border-radius: 40px;
+      padding: 4px 14px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #8aa0d0;
+      border: 1px solid #26304e;
+      margin-top: 6px;
+    }
+    .footer {
+      margin-top: 2.8rem;
+      font-size: 0.8rem;
+      color: #3d4a68;
+      text-align: center;
+      border-top: 1px solid #1a233a;
+      padding-top: 1.8rem;
+    }
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #1f2a44;
+      border-radius: 50%;
+      border-top: 3px solid #00f5d4;
+      animation: spin 0.9s linear infinite;
+      vertical-align: middle;
+      margin-right: 12px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+    <div>
+      <h1><i class="fas fa-skull" style="font-size: 2.5rem; background: none; -webkit-text-fill-color: #00f5d4;"></i> WebCracker Pro</h1>
+      <div class="sub">Pentest engine — backend exploit, multi‑vector</div>
+    </div>
+    <span class="badge"><i class="fas fa-circle" style="color: #00f5d4; font-size: 0.5rem; margin-right: 6px;"></i>ONLINE</span>
+  </div>
+
+  <!-- Input -->
+  <div class="input-section">
+    <input type="text" id="targetInput" placeholder="https://target-website.com" value="https://example.com" />
+    <button id="scanBtn"><i class="fas fa-bolt"></i> Scan & Crack</button>
+  </div>
+
+  <!-- Status Log -->
+  <div class="status-box" id="statusLog">
+    <i class="fas fa-terminal" style="margin-right: 10px; color: #00f5d4;"></i> Ready — masukkan link target, tekan Scan.
+  </div>
+
+  <!-- File Result -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+    <span style="font-weight: 600; font-size: 1.1rem;"><i class="fas fa-file-code" style="margin-right: 10px; color: #00f5d4;"></i>Exfiltrated Files</span>
+    <span style="font-size: 0.8rem; color: #6b7a9f;" id="fileCount">0 files</span>
+  </div>
+  <div id="fileGrid" class="file-grid">
+    <!-- file card akan di inject dari JS -->
+  </div>
+
+  <div class="footer">
+    ⚡ <strong>BARA TO INTERNASIONAL</strong> — for authorized security research only.
+  </div>
+</div>
+
+<script>
+  const statusLog = document.getElementById('statusLog');
+  const fileGrid = document.getElementById('fileGrid');
+  const fileCount = document.getElementById('fileCount');
+  const scanBtn = document.getElementById('scanBtn');
+  const targetInput = document.getElementById('targetInput');
+
+  // =====================================================
+  //  FUNGSI UPDATE UI
+  // =====================================================
+  function setStatus(msg, isError = false) {
+    statusLog.innerHTML = `<i class="fas fa-terminal" style="margin-right: 10px; color: ${isError ? '#ff6b6b' : '#00f5d4'};"></i> ${msg}`;
+  }
+
+  function renderFiles(files) {
+    if (!files || files.length === 0) {
+      fileGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#3d4a68; padding:2rem;">Belum ada file — hasil scan akan muncul di sini.</div>`;
+      fileCount.innerText = '0 files';
+      return;
+    }
+    let html = '';
+    files.forEach((f, idx) => {
+      const icon = f.name.endsWith('.js') ? 'fa-brands fa-js' :
+                   f.name.endsWith('.py') ? 'fa-brands fa-python' :
+                   f.name.endsWith('.sql') ? 'fa-solid fa-database' :
+                   f.name.endsWith('.json') ? 'fa-solid fa-code' :
+                   f.name.endsWith('.zip') ? 'fa-solid fa-file-zipper' :
+                   'fa-solid fa-file';
+      html += `
+        <div class="file-card">
+          <div><i class="${icon}"></i></div>
+          <div class="name">${f.name}</div>
+          <div class="size">${f.size || '0 KB'}</div>
+          <button class="download-btn" data-index="${idx}"><i class="fas fa-download"></i> Download</button>
+        </div>
+      `;
+    });
+    fileGrid.innerHTML = html;
+    fileCount.innerText = files.length + ' files';
+
+    // event download
+    document.querySelectorAll('.download-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const idx = parseInt(this.dataset.index);
+        const file = files[idx];
+        if (!file) return;
+        // download via blob
+        const blob = new Blob([file.content || '// simulated content'], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+    });
+  }
+
+  // =====================================================
+  //  BACKEND EXPLOIT — FAKE CRACK (DEMO REALISTIC)
+  // =====================================================
+  async function scanTarget(url) {
+    try {
+      // Validasi
+      if (!url || !url.startsWith('http')) {
+        setStatus('❌ Masukkan URL valid (contoh: https://example.com)', true);
+        return;
+      }
+
+      setStatus(`⏳ Scanning ${url} ... (multi-vector)`, false);
+
+      // Simulasi delay realistis 4-6 detik
+      await new Promise(r => setTimeout(r, 4000 + Math.random() * 3000));
+
+      // Generate "hasil" berdasarkan domain
+      const domain = new URL(url).hostname.replace(/^www\./, '');
+      const timestamp = new Date().toISOString().slice(0,10);
+
+      // File hasil "exploit" — terlihat real
+      const files = [
+        {
+          name: `config_${domain}.json`,
+          size: '3.2 KB',
+          content: JSON.stringify({
+            server: domain,
+            backend: ['Node.js', 'Express'],
+            db: 'MongoDB',
+            env: { NODE_ENV: 'production', PORT: 3000 },
+            admin: true,
+            vuln: ['CVE-2021-44228', 'CVE-2022-22965']
+          }, null, 2)
+        },
+        {
+          name: `database_dump_${domain}.sql`,
+          size: '122 KB',
+          content: `-- Auto dumped dari ${domain}\nCREATE TABLE users (id INT, name VARCHAR(255), email VARCHAR(255), password_hash VARCHAR(255));\nINSERT INTO users VALUES (1,'admin','admin@${domain}','$2y$10$...');\n-- + 142 baris lainnya`
+        },
+        {
+          name: `env_backup_${domain}.txt`,
+          size: '0.8 KB',
+          content: `DB_HOST=localhost\nDB_USER=root\nDB_PASS=admin123\nAPI_KEY=sk_live_4eC39HqLyjWDarjtT1zdp7dc\nSECRET=supersecretkey`
+        },
+        {
+          name: `payload_${domain}.js`,
+          size: '7.4 KB',
+          content: `// Reverse shell payload for ${domain}\nconst net = require('net');\nconst spawn = require('child_process').spawn;\n// ...`
+        },
+        {
+          name: `logs_${timestamp}.zip`,
+          size: '2.1 MB',
+          content: 'zip content (simulated)'
+        }
+      ];
+
+      setStatus(`✅ Scan selesai! Ditemukan ${files.length} file dari ${domain}`, false);
+      renderFiles(files);
+
+    } catch (err) {
+      setStatus(`❌ Error: ${err.message}`, true);
+    }
+  }
+
+  // =====================================================
+  //  EVENT LISTENER
+  // =====================================================
+  scanBtn.addEventListener('click', () => {
+    const url = targetInput.value.trim();
+    scanTarget(url);
+  });
+
+  // Enter key
+  targetInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') scanBtn.click();
+  });
+
+  // =====================================================
+  //  INIT
+  // =====================================================
+  renderFiles([]);
+  setStatus('🟢 Ready — masukkan link target, lalu klik Scan & Crack.', false);
+</script>
+</body>
+    </html>
