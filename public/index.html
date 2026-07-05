@@ -711,7 +711,259 @@
     <!-- ===== JAVASCRIPT ===== -->
     <script>
         // ============================================
-        // STATE
+         // STATE
         // ============================================
         let ws = null;
-        l
+        let scanning = false;
+        let scanned = 0,
+            threats = 0,
+            clean = 0;
+
+        // ============================================
+        // PERMISSION
+        // ============================================
+        function grant() {
+            document.getElementById('permission').style.display = 'none';
+            document.getElementById('main').style.display = 'block';
+            initWS();
+            initBg();
+        }
+
+        // ============================================
+        // BACKGROUND
+        // ============================================
+        function initBg() {
+            const c = document.getElementById('bg');
+            for (let i = 0; i < 20; i++) {
+                const s = document.createElement('span');
+                s.style.left = Math.random() * 100 + '%';
+                s.style.animationDelay = Math.random() * 20 + 's';
+                s.style.animationDuration = (15 + Math.random() * 20) + 's';
+                s.style.width = (3 + Math.random() * 5) + 'px';
+                s.style.height = s.style.width;
+                c.appendChild(s);
+            }
+        }
+
+        // ============================================
+        // WEBSOCKET
+        // ============================================
+        function initWS() {
+            const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${proto}//${window.location.host}`);
+
+            ws.onopen = () => {
+                document.getElementById('connStatus').textContent = '🟢 Connected';
+                document.getElementById('connStatus').style.color = '#00ff88';
+            };
+
+            ws.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+
+                if (data.type === 'scan_started') {
+                    document.getElementById('statusText').innerHTML =
+                        `<i class="fas fa-spinner fa-spin"></i> ${data.message}`;
+                    document.getElementById('statusText').style.color = '#ffaa00';
+                } else if (data.type === 'scan_progress') {
+                    document.getElementById('progressFill').style.width = data.progress + '%';
+                    document.getElementById('statusText').innerHTML =
+                        `<i class="fas fa-spinner fa-spin"></i> Scanning ${data.progress}%`;
+                } else if (data.type === 'scan_complete') {
+                    document.getElementById('progressFill').style.width = '100%';
+                    const icon = data.totalThreats > 0 ? 'fa-exclamation-triangle' : 'fa-check-circle';
+                    const color = data.totalThreats > 0 ? '#ff0040' : '#00ff88';
+                    document.getElementById('statusText').innerHTML =
+                        `<i class="fas ${icon}"></i> Selesai! ${data.totalThreats} threat`;
+                    document.getElementById('statusText').style.color = color;
+                    showResults(data);
+                    scanning = false;
+                    document.getElementById('scanBtn').disabled = false;
+                } else if (data.type === 'error') {
+                    document.getElementById('statusText').innerHTML =
+                        `<i class="fas fa-times-circle"></i> ${data.message}`;
+                    document.getElementById('statusText').style.color = '#ff0040';
+                    scanning = false;
+                    document.getElementById('scanBtn').disabled = false;
+                }
+            };
+
+            ws.onclose = () => {
+                document.getElementById('connStatus').textContent = '🔴 Disconnected';
+                document.getElementById('connStatus').style.color = '#ff0040';
+                setTimeout(initWS, 3000);
+            };
+        }
+
+        // ============================================
+        // SHOW RESULTS
+        // ============================================
+        function showResults(data) {
+            scanned++;
+            threats += data.totalThreats;
+            if (data.totalThreats === 0) clean++;
+
+            document.getElementById('statsContainer').style.display = 'block';
+            document.getElementById('totalScanned').textContent = scanned;
+            document.getElementById('totalThreats').textContent = threats;
+            document.getElementById('totalClean').textContent = clean;
+
+            let html = `
+                <div style="margin-bottom:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+                    <span class="badge"><i class="fas fa-file"></i> ${data.filename}</span>
+                    <span style="color:rgba(255,255,255,0.3);font-size:11px">
+                        ${new Date(data.timestamp).toLocaleString()}
+                    </span>
+                </div>
+            `;
+
+            if (data.results.length === 0) {
+                html += `
+                    <div style="padding:16px;text-align:center;background:rgba(0,255,136,0.03);border-radius:10px;border:1px solid rgba(0,255,136,0.05)">
+                        <i class="fas fa-check-circle" style="color:#00ff88;font-size:24px;display:block;margin-bottom:8px"></i>
+                        <span style="color:#00ff88">✅ Aman! Tidak ada virus</span>
+                    </div>
+                `;
+            } else {
+                data.results.forEach(r => {
+                    html += `
+                        <div class="result-item">
+                            <div>
+                                <span class="name">${r.name}</span>
+                                <span class="type">${r.type}</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:10px">
+                                <span class="conf">${r.confidence}%</span>
+                                <span class="severity ${r.severity}">${r.severity}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('results').innerHTML = html + document.getElementById('results').innerHTML;
+        }
+
+        // ============================================
+        // HANDLE FILE
+        // ============================================
+        function handleFile(file) {
+            const valid = ['.apk', '.js', '.py', '.exe', '.bat', '.sh', '.php', '.jar', '.dll', '.so', '.bin'];
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (!valid.includes(ext)) {
+                alert(`❌ ${file.name} tidak didukung`);
+                return;
+            }
+
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.innerHTML = `
+                <span class="fname"><i class="fas fa-file"></i> ${file.name}</span>
+                <span class="fsize">${(file.size/1024).toFixed(1)} KB</span>
+                <span style="color:#ffaa00;font-size:11px"><i class="fas fa-spinner fa-spin"></i></span>
+            `;
+            document.getElementById('fileList').prepend(item);
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    scanning = true;
+                    document.getElementById('scanBtn').disabled = true;
+                    ws.send(JSON.stringify({
+                        type: 'scan',
+                        filename: file.name,
+                        content: e.target.result.split(',')[1]
+                    }));
+                    document.getElementById('statusText').innerHTML =
+                        `<i class="fas fa-upload"></i> Uploading ${file.name}`;
+                    document.getElementById('statusText').style.color = '#ffaa00';
+                } else {
+                    alert('⚠️ WebSocket tidak terhubung!');
+                    item.remove();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+
+        // File input
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            for (const f of e.target.files) handleFile(f);
+            e.target.value = '';
+        });
+
+        // Drag & drop
+        document.getElementById('uploadArea').addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        });
+
+        document.getElementById('uploadArea').addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+        });
+
+        document.getElementById('uploadArea').addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            for (const f of e.dataTransfer.files) handleFile(f);
+        });
+
+        // Scan URL
+        document.getElementById('scanBtn').addEventListener('click', async () => {
+            const url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                alert('Masukkan URL!');
+                return;
+            }
+            if (scanning) return;
+
+            try {
+                scanning = true;
+                document.getElementById('scanBtn').disabled = true;
+                document.getElementById('progressFill').style.width = '0%';
+                document.getElementById('statusText').innerHTML =
+                    `<i class="fas fa-spinner fa-spin"></i> Fetching ${url}`;
+                document.getElementById('statusText').style.color = '#ffaa00';
+                document.getElementById('progressFill').style.width = '30%';
+
+                const res = await fetch('/api/scan-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                document.getElementById('progressFill').style.width = '100%';
+                const icon = data.totalThreats > 0 ? 'fa-exclamation-triangle' : 'fa-check-circle';
+                const color = data.totalThreats > 0 ? '#ff0040' : '#00ff88';
+                document.getElementById('statusText').innerHTML =
+                    `<i class="fas ${icon}"></i> Selesai! ${data.totalThreats} threat`;
+                document.getElementById('statusText').style.color = color;
+                showResults(data);
+
+            } catch (e) {
+                document.getElementById('statusText').innerHTML =
+                    `<i class="fas fa-times-circle"></i> ${e.message}`;
+                document.getElementById('statusText').style.color = '#ff0040';
+            } finally {
+                scanning = false;
+                document.getElementById('scanBtn').disabled = false;
+            }
+        });
+
+        // Enter key
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('scanBtn').click();
+        });
+
+        console.log('🛡️ VirusDetect Pro Ready');
+    </script>
+
+</body>
+</html>
